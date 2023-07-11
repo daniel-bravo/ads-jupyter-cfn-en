@@ -1,0 +1,51 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  NotebookInstanceName:
+    Type: String
+    Description: 'Amazon SageMaker Notebook instance name'
+    Default: ads-blog-instance-eda
+Resources:
+  JupyterNotebookIAMPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - 'pricing:DescribeServices'
+              - 'pricing:GetAttributeValues'
+              - 'pricing:GetProducts'
+            Resource: '*'
+  JupyterNotebookIAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: 
+                  - sagemaker.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+      ManagedPolicyArns:
+        - !Ref JupyterNotebookIAMPolicy
+        - arn:aws:iam::aws:policy/AmazonSageMakerFullAccess
+  JupyterNotebookInstanceAds:
+    Type: AWS::SageMaker::NotebookInstance
+    Properties:
+      InstanceType: ml.t3.medium
+      RoleArn: !GetAtt JupyterNotebookIAMRole.Arn
+      NotebookInstanceName: !Ref NotebookInstanceName
+      LifecycleConfigName: !GetAtt JupyterNotebookInstanceAdsLifecycleConfig.NotebookInstanceLifecycleConfigName
+  JupyterNotebookInstanceAdsLifecycleConfig:
+    Type: "AWS::SageMaker::NotebookInstanceLifecycleConfig"
+    Properties:
+      OnStart:
+        - Content:
+            Fn::Base64: "cd /home/ec2-user/SageMaker/ && wget 'https://raw.githubusercontent.com/daniel-bravo/ads-jupyter/main/joinclean-ads-v2.ipynb' && wget 'https://raw.githubusercontent.com/daniel-bravo/ads-jupyter/main/EC2InstanceRecommendations.csv' && wget 'https://raw.githubusercontent.com/daniel-bravo/ads-jupyter/main/SystemPerformance.csv'"
+Outputs:
+  JupyterNotebookInstanceName:
+    Value: !GetAtt JupyterNotebookInstanceAds.NotebookInstanceName
