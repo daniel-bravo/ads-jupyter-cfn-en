@@ -45,7 +45,7 @@ Resources:
     Properties:
       OnStart:
         - Content:
-            Fn::Base64: "cd /home/ec2-user/SageMaker/ && wget 'https://raw.githubusercontent.com/daniel-bravo/ads-jupyter/main/joinclean-ads-v2.ipynb' && wget 'https://raw.githubusercontent.com/daniel-bravo/ads-jupyter/main/EC2InstanceRecommendations.csv' && wget 'https://raw.githubusercontent.com/daniel-bravo/ads-jupyter/main/SystemPerformance.csv'"
+            Fn::Base64: "cd /home/ec2-user/SageMaker/ && wget 'https://raw.githubusercontent.com/daniel-bravo/ads-jupyter-cfn-en/main/joinclean-ads-v2.ipynb' && wget 'https://raw.githubusercontent.com/daniel-bravo/ads-jupyter-cfn-en/main/EC2InstanceRecommendations.csv' && wget 'https://raw.githubusercontent.com/daniel-bravo/ads-jupyter-cfn-en/main/SystemPerformance.csv'"
 Outputs:
   JupyterNotebookInstanceName:
     Value: !GetAtt JupyterNotebookInstanceAds.NotebookInstanceName
